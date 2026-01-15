@@ -29,7 +29,7 @@ java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 }
-version = '0.2.4'
+version = '0.2.5-SNAPSHOT'
 group = 'io.github.tri-omega'
 archivesBaseName = 'typescript-service-generator'
 
@@ -39,10 +39,11 @@ repositories {
 }
 
 ext.versions = [
-        spring: '5.2.6.RELEASE',
-        guava : '29.0-jre',
+        spring: '7.0.3',
+        guava : '33.5-jre',
         junit : '5.6.2',
-        lombok: '1.18.12'
+        lombok: '1.18.42',
+        compileTesting: '0.23',
 ]
 
 idea {
@@ -68,7 +69,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok:${versions.lombok}"
 
     testImplementation "com.google.guava:guava:${versions.guava}"
-    testImplementation 'com.google.testing.compile:compile-testing:0.18'
+    testImplementation "com.google.testing.compile:compile-testing:${versions.compileTesting}"
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${versions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:${versions.junit}")
@@ -79,13 +80,13 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
+tasks.register('javadocJar', Jar) {
+    archiveClassifier = 'javadoc'
     from javadoc
 }
 
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
+tasks.register('sourcesJar', Jar) {
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
@@ -119,7 +120,7 @@ uploadArchives {
             }
 
             pom.project {
-                name 'TypeScript Service Generator'
+                name = 'TypeScript Service Generator'
                 packaging 'jar'
 
                 description 'Compile time library to auto-generate TypeScript services for Spring MVC controllers and ' +
@@ -134,7 +135,7 @@ uploadArchives {
 
                 licenses {
                     license {
-                        name 'The MIT License'
+                        name = 'The MIT License'
                         url 'https://opensource.org/licenses/MIT'
                     }
                 }
@@ -142,7 +143,7 @@ uploadArchives {
                 developers {
                     developer {
                         id 'william.frank'
-                        name 'William Frank'
+                        name = 'William Frank'
                         email 'info@williamfrank.net'
                     }
                 }
