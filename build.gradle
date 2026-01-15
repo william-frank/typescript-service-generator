@@ -20,15 +20,20 @@
  * SOFTWARE.
  */
 
-apply plugin: 'idea'
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'signing'
+plugins {
+    id 'idea'
+    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+}
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
+
 version = '0.2.5-SNAPSHOT'
 group = 'io.github.tri-omega'
 archivesBaseName = 'typescript-service-generator'
@@ -39,17 +44,17 @@ repositories {
 }
 
 ext.versions = [
-        spring: '7.0.3',
-        guava : '33.5-jre',
-        junit : '5.6.2',
-        lombok: '1.18.42',
-        compileTesting: '0.23',
+        spring        : '7.0.2',
+        guava         : '33.5.0-jre',
+        junit         : '5.6.2',
+        lombok        : '1.18.42',
+        compileTesting: '0.23.0',
 ]
 
 idea {
     module {
         // Marks the already(!) added srcDir as "generated"
-        generatedSourceDirs += file( "${projectDir}/src/test/resources")
+        generatedSourceDirs += file("${projectDir}/src/test/resources")
     }
 }
 
@@ -106,45 +111,49 @@ test {
 ext.uploadUserName = project.hasProperty('ossrhUsername') ? ossrhUsername : ""
 ext.uploadPassword = project.hasProperty('ossrhPassword') ? ossrhPassword : ""
 
-uploadArchives {
+publishing {
     repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: uploadUserName, password: uploadPassword)
+        maven {
+            def releasesRepoUrl = layout.buildDirectory.dir('https://oss.sonatype.org/service/local/staging/deploy/maven2/')
+            def snapshotsRepoUrl = layout.buildDirectory.dir('https://oss.sonatype.org/content/repositories/snapshots/')
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = uploadUserName
+                password = uploadPassword
             }
+        }
+    }
 
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: uploadUserName, password: uploadPassword)
-            }
+    publications {
+        mavenJava(MavenPublication) {
+//            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-            pom.project {
+            pom {
                 name = 'TypeScript Service Generator'
-                packaging 'jar'
+                packaging = 'jar'
 
-                description 'Compile time library to auto-generate TypeScript services for Spring MVC controllers and ' +
+                description = 'Compile time library to auto-generate TypeScript services for Spring MVC controllers and ' +
                         'interfaces for all the return and parameter types to be used in Angular client side projects'
-                url 'https://tri-omega.github.io/typescript-service-generator/'
+                url = 'https://tri-omega.github.io/typescript-service-generator/'
 
                 scm {
-                    connection 'scm:git:git://github.com/tri-omega/typescript-service-generator.git'
-                    developerConnection 'scm:git:ssh://github.com:tri-omega/typescript-service-generator.git'
-                    url 'https://github.com/tri-omega/typescript-service-generator.git'
+                    connection = 'scm:git:git://github.com/tri-omega/typescript-service-generator.git'
+                    developerConnection = 'scm:git:ssh://github.com:tri-omega/typescript-service-generator.git'
+                    url = 'https://github.com/tri-omega/typescript-service-generator.git'
                 }
 
                 licenses {
                     license {
                         name = 'The MIT License'
-                        url 'https://opensource.org/licenses/MIT'
+                        url = 'https://opensource.org/licenses/MIT'
                     }
                 }
 
                 developers {
                     developer {
-                        id 'william.frank'
+                        id = 'william.frank'
                         name = 'William Frank'
-                        email 'info@williamfrank.net'
+                        email = 'info@williamfrank.net'
                     }
                 }
             }
