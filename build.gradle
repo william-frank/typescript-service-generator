@@ -93,6 +93,10 @@ signing {
     sign configurations.archives
 }
 
+tasks.withType(Javadoc).configureEach {
+    options.addBooleanOption('Xdoclint:none', true)
+}
+
 tasks.register('javadocJar', Jar) {
     archiveClassifier = 'javadoc'
     from javadoc
