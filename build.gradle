@@ -23,7 +23,6 @@
 plugins {
     id 'idea'
     id 'java'
-    id 'java-library'
     id 'maven-publish'
     id 'signing'
 }
@@ -34,7 +33,7 @@ java {
     }
 }
 
-version = '0.2.5-SNAPSHOT'
+version = '0.3.1-SNAPSHOT'
 group = 'io.github.tri-omega'
 archivesBaseName = 'typescript-service-generator'
 
@@ -85,6 +84,15 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 }
 
+test {
+    useJUnitPlatform()
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
 tasks.register('javadocJar', Jar) {
     archiveClassifier = 'javadoc'
     from javadoc
@@ -97,15 +105,6 @@ tasks.register('sourcesJar', Jar) {
 
 artifacts {
     archives javadocJar, sourcesJar
-}
-
-signing {
-    required { gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
-}
-
-test {
-    useJUnitPlatform()
 }
 
 ext.uploadUserName = project.hasProperty('ossrhUsername') ? ossrhUsername : ""
@@ -125,7 +124,10 @@ publishing {
     }
 
     publications {
-        mavenJava(MavenPublication) {
+        archive(MavenPublication) {
+            from components.java
+            artifact source: sourcesJar, classifier: 'sources', extension: 'zip'
+            artifact source: javadocJar, classifier: 'javadoc', extension: 'zip'
 //            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
             pom {

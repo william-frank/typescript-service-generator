@@ -34,7 +34,7 @@ public class TreePath {
 
     private static final String className = "com.sun.source.util.TreePath";
 
-    private final Object instance;
+    private final com.sun.source.util.TreePath treePathInstance;
 
     private final Class<?> clazz;
 
@@ -43,21 +43,15 @@ public class TreePath {
     // ------------------ Logic      --------------------
 
     public TreePath(final Object instance) {
-        this.instance = instance;
-        try {
-            this.clazz = Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        if (instance instanceof final com.sun.source.util.TreePath treePath) {
+            this.treePathInstance = treePath;
         }
+        throw new IllegalArgumentException("Unknown type of the path instance " + instance.getClass());
     }
 
     public JavaFileObject getSourceFile() {
         try {
-            final Method getCompilationUnit = clazz.getMethod("getCompilationUnit");
-            final Object unit = getCompilationUnit.invoke(instance);
-            final Method getSourceFile = unit.getClass().getMethod("getSourceFile");
-            final Object sourceFile = getSourceFile.invoke(unit);
-            return (JavaFileObject)sourceFile;
+            return treePathInstance.getCompilationUnit().getSourceFile();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

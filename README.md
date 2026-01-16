@@ -48,10 +48,6 @@ The recommended way to integrate the library into the project is to ase APT plug
 
 ````build.gradle:````
 ```groovy
-plugins {
-  id "net.ltgt.apt" version "0.17"
-}
-
 //TypeScript endpoint Processing
 compileOnly group: "io.github.tri-omega", name: "typescript-service-generator", version: "0.2.4"
 annotationProcessor('org.springframework:spring-web')
