@@ -162,11 +162,10 @@ public class TypeDefinitionBuilder {
         if (element.asType().getKind().isPrimitive()) {
             return TypeKind.PRIMITIVE;
         }
-        switch (kind) {
-            case INTERFACE:
-            case CLASS: return TypeKind.INTERFACE;
-            case ENUM: return TypeKind.ENUM;
-        }
-        return TypeKind.UNKNOWN;
+        return switch (kind) {
+            case RECORD, INTERFACE, CLASS -> TypeKind.INTERFACE;
+            case ENUM -> TypeKind.ENUM;
+            default -> TypeKind.UNKNOWN;
+        };
     }
 }
