@@ -31,12 +31,7 @@ import java.lang.reflect.Method;
 public class TreePath {
 
     // ---------------- Fields & Constants --------------
-
-    private static final String className = "com.sun.source.util.TreePath";
-
     private final com.sun.source.util.TreePath treePathInstance;
-
-    private final Class<?> clazz;
 
     // ------------------ Properties --------------------
 
@@ -45,8 +40,9 @@ public class TreePath {
     public TreePath(final Object instance) {
         if (instance instanceof final com.sun.source.util.TreePath treePath) {
             this.treePathInstance = treePath;
+        } else {
+            throw new IllegalArgumentException("Unknown type of the path instance " + instance.getClass());
         }
-        throw new IllegalArgumentException("Unknown type of the path instance " + instance.getClass());
     }
 
     public JavaFileObject getSourceFile() {
