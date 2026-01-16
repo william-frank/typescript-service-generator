@@ -32,9 +32,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Created by kibork on 4/3/2018.
+ * Created by kibork on 1/16/2026.
  */
-public class SimplePropertyBuilderTest {
+public class SimpleRecordPropertyBuilderTest {
 
     // ------------------ Constants  --------------------
 
@@ -47,21 +47,21 @@ public class SimplePropertyBuilderTest {
 
     private Endpoint getEndpoint() {
         final EndpointProcessorSingleton endpointProcessorSingleton = TestUtils.compileClass(
-                "/org/omega/typescript/processor/test/SimpleDtoController.java"
+                "/org/omega/typescript/processor/test/SimpleRecordController.java"
         );
 
         return endpointProcessorSingleton.getEndpointContainer()
-                .getEndpoint("org.omega.typescript.processor.test.SimpleDtoController")
-                .orElseThrow(() -> new IllegalStateException("SimpleDtoController endpoint not found"));
+                .getEndpoint("org.omega.typescript.processor.test.SimpleRecordController")
+                .orElseThrow(() -> new IllegalStateException("SimpleRecordController endpoint not found"));
     }
 
     @Test
     public void testSimpleProperties() {
         final Endpoint endpoint = getEndpoint();
-        final EndpointMethod getSimpleDto = endpoint.getMethod("getSimpleDto")
-                .orElseThrow(() -> new IllegalStateException("Unable to find getSimpleDto method!"));
+        final EndpointMethod getSimpleRecord = endpoint.getMethod("getSimpleRecord")
+                .orElseThrow(() -> new IllegalStateException("Unable to find getSimpleRecord method!"));
 
-        final List<PropertyDefinition> properties = getSimpleDto.getReturnType().getProperties();
+        final List<PropertyDefinition> properties = getSimpleRecord.getReturnType().getProperties();
         
         assertEquals(3, properties.size());
 
