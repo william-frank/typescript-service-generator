@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 William Frank (info@williamfrank.net)
+ * Copyright (c) 2018-2026 William Frank (info@williamfrank.net)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,33 +31,23 @@ import java.lang.reflect.Method;
 public class TreePath {
 
     // ---------------- Fields & Constants --------------
-
-    private static final String className = "com.sun.source.util.TreePath";
-
-    private final Object instance;
-
-    private final Class<?> clazz;
+    private final com.sun.source.util.TreePath treePathInstance;
 
     // ------------------ Properties --------------------
 
     // ------------------ Logic      --------------------
 
     public TreePath(final Object instance) {
-        this.instance = instance;
-        try {
-            this.clazz = Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        if (instance instanceof final com.sun.source.util.TreePath treePath) {
+            this.treePathInstance = treePath;
+        } else {
+            throw new IllegalArgumentException("Unknown type of the path instance " + instance.getClass());
         }
     }
 
     public JavaFileObject getSourceFile() {
         try {
-            final Method getCompilationUnit = clazz.getMethod("getCompilationUnit");
-            final Object unit = getCompilationUnit.invoke(instance);
-            final Method getSourceFile = unit.getClass().getMethod("getSourceFile");
-            final Object sourceFile = getSourceFile.invoke(unit);
-            return (JavaFileObject)sourceFile;
+            return treePathInstance.getCompilationUnit().getSourceFile();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

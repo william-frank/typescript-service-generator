@@ -20,16 +20,20 @@
  * SOFTWARE.
  */
 
-apply plugin: 'idea'
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'signing'
+plugins {
+    id 'idea'
+    id 'java'
+    id 'maven-publish'
+    id 'signing'
+}
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
-version = '0.2.4'
+
+version = '0.3.1-SNAPSHOT'
 group = 'io.github.tri-omega'
 archivesBaseName = 'typescript-service-generator'
 
@@ -39,16 +43,17 @@ repositories {
 }
 
 ext.versions = [
-        spring: '5.2.6.RELEASE',
-        guava : '29.0-jre',
-        junit : '5.6.2',
-        lombok: '1.18.12'
+        spring        : '7.0.2',
+        guava         : '33.5.0-jre',
+        junit         : '5.6.2',
+        lombok        : '1.18.42',
+        compileTesting: '0.23.0',
 ]
 
 idea {
     module {
         // Marks the already(!) added srcDir as "generated"
-        generatedSourceDirs += file( "${projectDir}/src/test/resources")
+        generatedSourceDirs += file("${projectDir}/src/test/resources")
     }
 }
 
@@ -68,7 +73,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok:${versions.lombok}"
 
     testImplementation "com.google.guava:guava:${versions.guava}"
-    testImplementation 'com.google.testing.compile:compile-testing:0.18'
+    testImplementation "com.google.testing.compile:compile-testing:${versions.compileTesting}"
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${versions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:${versions.junit}")
@@ -79,18 +84,8 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-artifacts {
-    archives javadocJar, sourcesJar
+test {
+    useJUnitPlatform()
 }
 
 signing {
@@ -98,52 +93,73 @@ signing {
     sign configurations.archives
 }
 
-test {
-    useJUnitPlatform()
+tasks.withType(Javadoc).configureEach {
+    options.addBooleanOption('Xdoclint:none', true)
+}
+
+tasks.register('javadocJar', Jar) {
+    archiveClassifier = 'javadoc'
+    from javadoc
+}
+
+tasks.register('sourcesJar', Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
 }
 
 ext.uploadUserName = project.hasProperty('ossrhUsername') ? ossrhUsername : ""
 ext.uploadPassword = project.hasProperty('ossrhPassword') ? ossrhPassword : ""
 
-uploadArchives {
+publishing {
     repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: uploadUserName, password: uploadPassword)
+        maven {
+            def releasesRepoUrl = layout.buildDirectory.dir('https://oss.sonatype.org/service/local/staging/deploy/maven2/')
+            def snapshotsRepoUrl = layout.buildDirectory.dir('https://oss.sonatype.org/content/repositories/snapshots/')
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = uploadUserName
+                password = uploadPassword
             }
+        }
+    }
 
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: uploadUserName, password: uploadPassword)
-            }
+    publications {
+        archive(MavenPublication) {
+            from components.java
+            artifact source: sourcesJar, classifier: 'sources', extension: 'zip'
+            artifact source: javadocJar, classifier: 'javadoc', extension: 'zip'
+//            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-            pom.project {
-                name 'TypeScript Service Generator'
-                packaging 'jar'
+            pom {
+                name = 'TypeScript Service Generator'
+                packaging = 'jar'
 
-                description 'Compile time library to auto-generate TypeScript services for Spring MVC controllers and ' +
+                description = 'Compile time library to auto-generate TypeScript services for Spring MVC controllers and ' +
                         'interfaces for all the return and parameter types to be used in Angular client side projects'
-                url 'https://tri-omega.github.io/typescript-service-generator/'
+                url = 'https://tri-omega.github.io/typescript-service-generator/'
 
                 scm {
-                    connection 'scm:git:git://github.com/tri-omega/typescript-service-generator.git'
-                    developerConnection 'scm:git:ssh://github.com:tri-omega/typescript-service-generator.git'
-                    url 'https://github.com/tri-omega/typescript-service-generator.git'
+                    connection = 'scm:git:git://github.com/tri-omega/typescript-service-generator.git'
+                    developerConnection = 'scm:git:ssh://github.com:tri-omega/typescript-service-generator.git'
+                    url = 'https://github.com/tri-omega/typescript-service-generator.git'
                 }
 
                 licenses {
                     license {
-                        name 'The MIT License'
-                        url 'https://opensource.org/licenses/MIT'
+                        name = 'The MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
                     }
                 }
 
                 developers {
                     developer {
-                        id 'william.frank'
-                        name 'William Frank'
-                        email 'info@williamfrank.net'
+                        id = 'william.frank'
+                        name = 'William Frank'
+                        email = 'info@williamfrank.net'
                     }
                 }
             }
