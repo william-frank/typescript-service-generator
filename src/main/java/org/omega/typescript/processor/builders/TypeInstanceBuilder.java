@@ -87,12 +87,15 @@ public class TypeInstanceBuilder {
         if (parentElement instanceof TypeElement) {
             //Get the class that contains the generic type definition from the Oracle
             final TypeDefinition parentType = context.getTypeOracle().getOrDefineType((TypeElement) parentElement);
-            final TypeDefinition typeDefinition = parentType.getGenericTypeParams().stream()
+            return parentType.getGenericTypeParams().stream()
                     .filter(f -> f.getShortName().equals(typeParamName))
-                    .findAny().orElseThrow(() -> new IllegalStateException("Unknown type template with name " + typeParamName + " in " + parentType));
-            final TypeInstanceDefinition definition = new TypeInstanceDefinition(typeDefinition);
-            checkTypeParameters(definition, typeMirror);
-            return definition;
+                    .findAny()
+                    .map(typeDefinition -> {
+                        final TypeInstanceDefinition definition = new TypeInstanceDefinition(typeDefinition);
+                        checkTypeParameters(definition, typeMirror);
+                        return definition;
+                    })
+                    .orElse(null);
         } else if (parentElement instanceof ExecutableElement) {
             //For methods: we drop the generic type to either the bound if there's a single one or to 'any' otherwise
             //It is possible to synthesise an interface for the return type if there are multiple bounds
@@ -130,26 +133,11 @@ public class TypeInstanceBuilder {
         if (typeMirror instanceof DeclaredType declaredType) {
             final List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
             for (final TypeMirror typeArgument : typeArguments) {
-                if (typeArgument.getKind() == TypeKind.TYPEVAR) {
-                    final TypeParameterElement element = (TypeParameterElement) context.getProcessingEnv()
-                            .getTypeUtils()
-                            .asElement(typeArgument);
-                    final Element parentElement = element.getGenericElement();
-                    if ((parentElement instanceof final TypeElement parentTypeElement) &&
-                            (TypeUtils.getClassName(parentTypeElement).contentEquals(typeInstance.getFullName()))
-                    ) {
-                        typeInstance
-                                .getGenericTypeArguments()
-                                .add(buildAny());
-                    } else {
-                        typeInstance
-                                .getGenericTypeArguments()
-                                .add(createFromGenericTypeParameter(typeArgument));
-                    }
-                } else {
+                final TypeInstanceDefinition instanceDefinition = buildDefinition(typeArgument);
+                if (instanceDefinition != null) {
                     typeInstance
                             .getGenericTypeArguments()
-                            .add(buildDefinition(typeArgument));
+                            .add(instanceDefinition);
                 }
             }
         }

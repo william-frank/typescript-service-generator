@@ -132,8 +132,8 @@ publishing {
     publications {
         archive(MavenPublication) {
             from components.java
-            artifact source: sourcesJar, classifier: 'sources', extension: 'zip'
-            artifact source: javadocJar, classifier: 'javadoc', extension: 'zip'
+            artifact source: sourcesJar, classifier: 'sources'
+            artifact source: javadocJar, classifier: 'javadoc'
 //            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
             pom {
