@@ -25,6 +25,7 @@ package org.omega.typescript.processor.services;
 import org.omega.typescript.processor.model.Endpoint;
 import org.omega.typescript.processor.model.TypeDefinition;
 
+import javax.tools.FileObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,7 +38,7 @@ public interface StorageStrategy {
 
     PrintWriter createWriter(String filename) throws IOException;
 
-    File getFile(String filename);
+    FileObject getFile(String filename);
 
     PrintWriter createWriter(Endpoint endpoint) throws IOException;
 }

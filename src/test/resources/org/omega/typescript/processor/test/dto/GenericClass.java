@@ -16,6 +16,8 @@ public class GenericClass<T extends CompositeDto & HasName> {
 
     private T field2;
 
+    private RecursiveGenericTypeInstance field3;
+
     // ------------------ Properties --------------------
 
     // ------------------ Logic      --------------------
@@ -54,6 +56,16 @@ public class GenericClass<T extends CompositeDto & HasName> {
     public static class DoubleGeneric<T1, T2> {
         private T1 t1;
         private T2 t2;
+    }
+
+    @Data
+    public static class RecursiveGenericBaseType<T extends RecursiveGenericBaseType<T>> {
+        private T t;
+    }
+
+    @Data
+    public static class RecursiveGenericTypeInstance extends RecursiveGenericBaseType<RecursiveGenericTypeInstance> {
+
     }
 
 

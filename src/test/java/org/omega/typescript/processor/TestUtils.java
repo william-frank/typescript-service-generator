@@ -53,9 +53,14 @@ public class TestUtils {
             final JavaFileObject simpleControllerObject = JavaFileObjects.forResource(TestUtils.class.getResource(resourceName));
 
             try {
-                Compilation compilation = Compiler.javac()
+                final Compilation compilation = Compiler.javac()
                         .withProcessors(new ServiceEndpointProcessor())
                         .compile(simpleControllerObject);
+                if (!compilation.errors().isEmpty()) {
+                    throw new RuntimeException(
+                            "Unable to compile " + resourceName + " due to compilation errors: " + compilation.errors()
+                    );
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

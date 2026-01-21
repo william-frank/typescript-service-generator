@@ -76,7 +76,7 @@ public class GenericClassControllerTest {
         }
 
 
-        assertEquals(2, type.getProperties().size());
+        assertEquals(3, type.getProperties().size());
         {
             final PropertyDefinition property = type.getProperties().get(0);
             checkProperty(property, "field1", "SubGeneric");
@@ -116,7 +116,14 @@ public class GenericClassControllerTest {
 
         }
 
-//        checkProperty(type.getProperties().get(1), "field2", "SubDto");
+        {
+            checkProperty(type.getProperties().get(1), "field2", "T");
+        }
+
+        {
+            final PropertyDefinition propertyDefinition = type.getProperties().get(2);
+            checkProperty(propertyDefinition, "field3", "RecursiveGenericTypeInstance");
+        }
     }
 
 }

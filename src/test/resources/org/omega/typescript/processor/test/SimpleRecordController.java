@@ -27,7 +27,7 @@ public class SimpleRecordController {
 
     @GetMapping("get")
     public SimpleRecord getSimpleRecord() {
-        return new SimpleRecord();
+        return null;
     }
 
 }

@@ -43,10 +43,10 @@ public final class IOUtils {
     private IOUtils() {
     }
 
-    public static boolean copyResource(final String resourcePath, final File target) {
+    public static boolean copyResource(final String resourcePath, final FileObject target) {
         try (
                 InputStream iStream = new BufferedInputStream(IOUtils.class.getResourceAsStream(resourcePath));
-                OutputStream oStream = new BufferedOutputStream(new FileOutputStream(target))
+                OutputStream oStream = new BufferedOutputStream(target.openOutputStream())
         ) {
             byte buffer[] = new byte[8 * 1024];
             int read;

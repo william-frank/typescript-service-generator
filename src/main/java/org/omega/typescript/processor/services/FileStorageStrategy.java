@@ -22,6 +22,11 @@
 
 package org.omega.typescript.processor.services;
 
+import org.omega.typescript.processor.utils.LocalFileObject;
+
+import javax.tools.FileObject;
+import javax.tools.JavaFileObject;
+import javax.tools.SimpleJavaFileObject;
 import java.io.File;
 
 /**
@@ -43,7 +48,7 @@ public class FileStorageStrategy extends BaseStorageStrategy {
     }
 
     @Override
-    public File getFile(final String filename) {
+    public FileObject getFile(final String filename) {
         final File targetFile = new File(filename).getAbsoluteFile();
         if (targetFile.exists()) {
             final boolean result = targetFile.delete();
@@ -56,7 +61,7 @@ public class FileStorageStrategy extends BaseStorageStrategy {
                 context.error("Failed to create containing folder " + targetFile.getParentFile());
             }
         }
-        return targetFile;
+        return new LocalFileObject(targetFile);
     }
 
 

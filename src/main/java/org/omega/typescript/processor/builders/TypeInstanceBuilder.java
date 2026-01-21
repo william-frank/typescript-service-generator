@@ -25,6 +25,7 @@ package org.omega.typescript.processor.builders;
 import org.omega.typescript.processor.model.TypeDefinition;
 import org.omega.typescript.processor.model.TypeInstanceDefinition;
 import org.omega.typescript.processor.services.ProcessingContext;
+import org.omega.typescript.processor.utils.TypeUtils;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -62,7 +63,7 @@ public class TypeInstanceBuilder {
         } else if (typeMirror.getKind() == TypeKind.WILDCARD) {
             return createWildcardInstance((WildcardType) typeMirror);
         } else if (typeMirror.getKind() == TypeKind.ARRAY) {
-            return createArray((ArrayType)typeMirror);
+            return createArray((ArrayType) typeMirror);
         } else {
             //If this is a simple case
             final TypeInstanceDefinition typeInstance = new TypeInstanceDefinition(context.getTypeOracle().getOrDefineType(typeMirror));
@@ -80,7 +81,7 @@ public class TypeInstanceBuilder {
     }
 
     private TypeInstanceDefinition createFromGenericTypeParameter(TypeMirror typeMirror) {
-        final TypeParameterElement element = (TypeParameterElement)context.getProcessingEnv().getTypeUtils().asElement(typeMirror);
+        final TypeParameterElement element = (TypeParameterElement) context.getProcessingEnv().getTypeUtils().asElement(typeMirror);
         final String typeParamName = element.getSimpleName().toString();
         final Element parentElement = element.getGenericElement();
         if (parentElement instanceof TypeElement) {
@@ -97,7 +98,7 @@ public class TypeInstanceBuilder {
             //It is possible to synthesise an interface for the return type if there are multiple bounds
             //but it gets complicated when there are multiple template types within the same method aka:
             // public <T1, T2, T3> T1<T2, List<T3>> getField();
-            final ExecutableElement executableElement = (ExecutableElement)parentElement;
+            final ExecutableElement executableElement = (ExecutableElement) parentElement;
             if (element.getBounds().size() == 1) {
                 return buildDefinition(element.getBounds().get(0));
             } else {
@@ -126,12 +127,30 @@ public class TypeInstanceBuilder {
     }
 
     private void checkTypeParameters(final TypeInstanceDefinition typeInstance, final TypeMirror typeMirror) {
-//        final TypeMirror captureMirror = context.getProcessingEnv().getTypeUtils().capture(typeMirror);
-        if (typeMirror instanceof DeclaredType) {
-            final DeclaredType declaredType = (DeclaredType)typeMirror;
+        if (typeMirror instanceof DeclaredType declaredType) {
             final List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
             for (final TypeMirror typeArgument : typeArguments) {
-                typeInstance.getGenericTypeArguments().add(buildDefinition(typeArgument));
+                if (typeArgument.getKind() == TypeKind.TYPEVAR) {
+                    final TypeParameterElement element = (TypeParameterElement) context.getProcessingEnv()
+                            .getTypeUtils()
+                            .asElement(typeArgument);
+                    final Element parentElement = element.getGenericElement();
+                    if ((parentElement instanceof final TypeElement parentTypeElement) &&
+                            (TypeUtils.getClassName(parentTypeElement).contentEquals(typeInstance.getFullName()))
+                    ) {
+                        typeInstance
+                                .getGenericTypeArguments()
+                                .add(buildAny());
+                    } else {
+                        typeInstance
+                                .getGenericTypeArguments()
+                                .add(createFromGenericTypeParameter(typeArgument));
+                    }
+                } else {
+                    typeInstance
+                            .getGenericTypeArguments()
+                            .add(buildDefinition(typeArgument));
+                }
             }
         }
     }

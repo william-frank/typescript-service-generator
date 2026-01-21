@@ -3,6 +3,7 @@ package org.omega.typescript.processor.services;
 import org.omega.typescript.processor.model.Endpoint;
 import org.omega.typescript.processor.model.TypeDefinition;
 
+import javax.tools.FileObject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,8 +39,8 @@ public abstract class BaseStorageStrategy implements StorageStrategy {
 
     @Override
     public PrintWriter createWriter(final String filename) throws IOException {
-        final File targetFile = getFile(filename);
-        return new PrintWriter(new FileWriter(targetFile, false));
+        final FileObject targetFile = getFile(filename);
+        return new PrintWriter(targetFile.openWriter());
     }
 
 }
