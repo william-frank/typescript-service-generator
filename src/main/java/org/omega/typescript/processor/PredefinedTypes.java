@@ -25,6 +25,7 @@ package org.omega.typescript.processor;
 import org.omega.typescript.processor.model.TypeDefinition;
 import org.omega.typescript.processor.model.TypeKind;
 import org.omega.typescript.processor.model.TypeOracle;
+import org.omega.typescript.processor.utils.ClassUtils;
 import org.omega.typescript.processor.utils.TypeUtils;
 
 import java.math.BigDecimal;
@@ -68,21 +69,21 @@ public class PredefinedTypes {
         addPrimitive(typeOracle, "boolean", "boolean", "boolean");
         addPrimitive(typeOracle, Boolean.class, "boolean");
 
-        addPrimitive(typeOracle, BigDecimal.class,"number");
-        addPrimitive(typeOracle, BigInteger.class,"number");
+        addPrimitive(typeOracle, BigDecimal.class, "number");
+        addPrimitive(typeOracle, BigInteger.class, "number");
 
         typeOracle.addType(
                 new TypeDefinition(Map.class.getName(), Map.class.getSimpleName())
-                    .setTypeKind(TypeKind.MAP)
-                    .setPredefined(true)
-                    .setTypeScriptName("Map")
+                        .setTypeKind(TypeKind.MAP)
+                        .setPredefined(true)
+                        .setTypeScriptName("Map")
         );
 
         typeOracle.addType(
                 new TypeDefinition(TypeUtils.ARRAY_TYPE_NAME, TypeUtils.ARRAY_TYPE_NAME)
-                    .setTypeKind(TypeKind.COLLECTION)
-                    .setPredefined(true)
-                    .setTypeScriptName(TypeUtils.ARRAY_TYPE_NAME)
+                        .setTypeKind(TypeKind.COLLECTION)
+                        .setPredefined(true)
+                        .setTypeScriptName(TypeUtils.ARRAY_TYPE_NAME)
         );
 
         final GenConfig config = typeOracle.getContext().getGenConfig();
@@ -92,6 +93,18 @@ public class PredefinedTypes {
             addPrimitive(typeOracle, LocalTime.class, config.getTimeType());
             addPrimitive(typeOracle, LocalDate.class, config.getDateType());
         }
+
+        config.getTypeOverrides()
+                .forEach(
+                        (typeName, mappedType) ->
+                                typeOracle
+                                        .addType(
+                                                new TypeDefinition(typeName, ClassUtils.getSimpleClassName(typeName))
+                                                        .setTypeKind(TypeKind.INTERFACE)
+                                                        .setPredefined(true)
+                                                        .setTypeScriptName(mappedType)
+                                        )
+                );
     }
 
     private static void addPrimitive(final TypeOracle typeOracle, final Class<?> clazz, String tsTypeName) {

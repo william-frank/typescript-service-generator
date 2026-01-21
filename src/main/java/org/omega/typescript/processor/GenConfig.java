@@ -89,6 +89,8 @@ public class GenConfig {
 
     private Map<String, Pattern> excludedClasses = new HashMap<>();
 
+    private Map<String, String> typeOverrides = new HashMap<>();
+
     private long indentWidth = 2;
 
     // ------------------ Properties --------------------
@@ -133,7 +135,8 @@ public class GenConfig {
             properties.load(configData);
             properties.forEach((key, value) -> {
                 if (key.toString().startsWith(INTERNAL_PROP_PREFIX)) {
-                    readTsgProperty(key.toString().substring(INTERNAL_PROP_PREFIX.length()).trim(), value.toString().trim());
+                    final String tsgProperty = key.toString().substring(INTERNAL_PROP_PREFIX.length()).trim();
+                    readTsgProperty(tsgProperty, value.toString().trim());
                 } else {
                     pathOverrides.put(key.toString().trim(), value.toString().trim());
                 }
@@ -179,6 +182,9 @@ public class GenConfig {
             addExcludeFilter(value, propertyName.substring("exclude-classes-regex".length()));
         } else if ("indent.width".equalsIgnoreCase(propertyName)) {
             indentWidth = Long.valueOf(value);
+        } else if (propertyName.startsWith("primitive.")) {
+            final String[] mapping = value.split(":");
+            typeOverrides.put(mapping[0], mapping[1]);
         } else {
             context.error(String.format("Unknown tsg property %s with value %s, tsg is a reserved prefix", propertyName, value));
         }

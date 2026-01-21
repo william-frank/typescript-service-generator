@@ -55,4 +55,12 @@ public final class ClassUtils {
                 .toList();
     }
 
+    public static String getSimpleClassName(final String className) {
+        final int lastSeparator = className.lastIndexOf(".");
+        if (lastSeparator == -1) {
+            return className;
+        }
+        return className.substring(lastSeparator + 1);
+    }
+
 }
