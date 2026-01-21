@@ -73,6 +73,8 @@ public class GenConfig {
 
     private String additionalServiceIncludes = "#invalid#";
 
+    private String additionalModelIncludes = "";
+
     private boolean enableJavaTimeIntegration = true;
 
     private String storageStrategy = "javac";
@@ -156,6 +158,8 @@ public class GenConfig {
             defaultHttpClassName = value;
         } else if ("http-service-include".equalsIgnoreCase(propertyName)) {
             defaultHttpServiceInclude = value;
+        } else if ("model-include".equalsIgnoreCase(propertyName)) {
+            additionalModelIncludes = value;
         } else if ("output-folder".equalsIgnoreCase(propertyName)) {
             outputFolder = StringUtils.endWith(value, "/");
         } else if ("generated-suffix".equalsIgnoreCase(propertyName)) {

@@ -26,6 +26,7 @@ import org.omega.typescript.processor.model.TypeDefinition;
 import org.omega.typescript.processor.model.TypeInstanceDefinition;
 import org.omega.typescript.processor.model.TypeKind;
 import org.omega.typescript.processor.utils.RenderUtils;
+import org.omega.typescript.processor.utils.StringUtils;
 
 import java.io.PrintWriter;
 import java.util.HashSet;
@@ -110,6 +111,9 @@ public class InterfaceTypeEmitter extends BaseTypeEmitter {
             .forEach(i -> RenderUtils.visitTypeInstance(usedTypes, i));
         //Don't add an import for itself
         usedTypes.remove(definition);
+        if (StringUtils.hasText(context.getGenConfig().getAdditionalModelIncludes())) {
+            writer.println(context.getGenConfig().getAdditionalModelIncludes());
+        }
         RenderUtils.<TypeDefinition>renderImports(usedTypes, writer, (d) -> context.getNamingStrategy().getRelativeFileName(definition, d));
     }
 
