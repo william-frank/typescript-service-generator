@@ -69,7 +69,7 @@ public class GenConfigBasedNamingStrategy implements FileNamingStrategy {
             overrides = genConfig.getPathOverrides().entrySet().stream()
                     .map(e -> new PathOverride(StringUtils.endWith(e.getKey(), "."), StringUtils.endWith(e.getValue(), "/")))
                     .sorted(Comparator.<PathOverride, Integer>comparing(pathOverride -> pathOverride.getPath().length()).reversed())
-                    .collect(Collectors.toList());
+                    .toList();
         }
     }
 

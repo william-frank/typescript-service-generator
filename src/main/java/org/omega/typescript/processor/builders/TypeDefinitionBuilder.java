@@ -92,7 +92,7 @@ public class TypeDefinitionBuilder {
         final List<Element> members = TypeUtils.getMembers(typeElement, ElementKind.ENUM_CONSTANT, context);
         typeDefinition.getEnumConstants().addAll(members.stream()
                 .map(e -> new EnumConstant(e.getSimpleName().toString()))
-                .collect(Collectors.toList())
+                .toList()
         );
     }
 

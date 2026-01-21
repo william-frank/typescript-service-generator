@@ -74,7 +74,7 @@ public class MethodDefinitionBuilder {
                 .map(p -> methodParameterBuilder.builder(method, p))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toList())
+                .toList()
         );
 
         method.setReturnType(context.getTypeOracle().buildInstance(methodElement.getReturnType()));

@@ -22,15 +22,14 @@
 
 package org.omega.typescript.processor.utils;
 
-import org.omega.typescript.processor.services.ProcessingContext;
 import org.omega.typescript.processor.model.TypeDefinition;
+import org.omega.typescript.processor.services.ProcessingContext;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by kibork on 2/2/2018.
@@ -52,23 +51,18 @@ public final class TypeUtils {
     }
 
     public static List<Element> getMembers(final TypeElement typeElement, final ElementKind kind, final ProcessingContext context) {
-        return context.getProcessingEnv().getElementUtils().getAllMembers(typeElement).stream()
+        return context
+                .getProcessingEnv().getElementUtils()
+                .getAllMembers(typeElement).stream()
                 .filter(el -> el.getKind() == kind)
-                .collect(Collectors.toList());
-    }
-
-    public static List<ExecutableElement> getPropertyGetters(final TypeElement typeElement, final ProcessingContext context) {
-        final List<ExecutableElement> methods = getMethods(typeElement, context);
-
-        return methods.stream()
-                .filter(m -> m.getSimpleName().toString().startsWith("get") || m.getSimpleName().toString().startsWith("is"))
-                .collect(Collectors.toList());
+                .map(el -> (Element)el)
+                .toList();
     }
 
     public static List<ExecutableElement> getMethods(TypeElement typeElement, ProcessingContext context) {
         return TypeUtils.getMembers(typeElement, ElementKind.METHOD, context).stream()
-                    .map(m -> (ExecutableElement) m)
-                    .collect(Collectors.toList());
+                .map(m -> (ExecutableElement) m)
+                .toList();
     }
 
     public static String getClassName(TypeElement typeElement) {
@@ -84,7 +78,7 @@ public final class TypeUtils {
         final Types typeUtils = context.getProcessingEnv().getTypeUtils();
         final Element element = typeUtils.asElement(typeMirror);
         if (element instanceof QualifiedNameable) {
-            final QualifiedNameable nameable = (QualifiedNameable)element;
+            final QualifiedNameable nameable = (QualifiedNameable) element;
             return nameable.getQualifiedName().toString();
         }
         return element.getSimpleName().toString();

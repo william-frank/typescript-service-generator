@@ -34,4 +34,6 @@ public class PropertyDefinition {
 
     private TypeInstanceDefinition type;
 
+    private boolean notNullable;
+
 }

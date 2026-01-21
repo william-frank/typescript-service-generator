@@ -46,13 +46,13 @@ public final class ClassUtils {
     private ClassUtils() {
     }
 
-    public static List<Annotation> getClassAnnottions(final AnnotatedElement element) {
+    public static List<Annotation> getClassAnnotations(final AnnotatedElement element) {
         final Annotation[] annotations = element.getAnnotations();
         final List<Annotation> childAnnotations = Arrays.stream(annotations)
-                .flatMap(a -> getClassAnnottions(a.getClass()).stream())
-                .collect(Collectors.toList());
+                .flatMap(a -> getClassAnnotations(a.getClass()).stream())
+                .toList();
         return Stream.concat(Arrays.stream(annotations), childAnnotations.stream())
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

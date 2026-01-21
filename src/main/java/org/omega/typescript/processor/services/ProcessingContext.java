@@ -74,7 +74,10 @@ public class ProcessingContext {
 
     // ------------------ Logic      --------------------
 
-    public ProcessingContext(RoundEnvironment roundEnv, ProcessingEnvironment processingEnv, TypeOracle typeOracle, EndpointContainer endpointContainer) {
+    public ProcessingContext(final RoundEnvironment roundEnv,
+                             final ProcessingEnvironment processingEnv,
+                             final TypeOracle typeOracle,
+                             final EndpointContainer endpointContainer) {
         this.roundEnv = roundEnv;
         this.processingEnv = processingEnv;
         this.typeOracle = typeOracle;

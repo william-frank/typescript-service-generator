@@ -57,10 +57,15 @@ public final class PropertyHelpers {
                 .orElse(defaultName);
     }
 
-    public static PropertyDefinition buildProperty(final Element getter, final String defaultName, final TypeMirror returnType, final ProcessingContext context) {
+    public static PropertyDefinition buildProperty(final Element getter,
+                                                   final String defaultName,
+                                                   final TypeMirror returnType,
+                                                   final ProcessingContext context,
+                                                   final PropertyClassificationService propertyClassificationService) {
         final PropertyDefinition property = new PropertyDefinition();
         property.setName(getTypeScriptName(getter, defaultName, context));
         property.setType(context.getTypeOracle().buildInstance(returnType));
+        property.setNotNullable(propertyClassificationService.isNotNull(getter, returnType));
         return property;
     }
 }

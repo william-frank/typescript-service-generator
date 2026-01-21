@@ -50,7 +50,7 @@ public class RenderUtils {
                 .filter(t -> t.getTypeKind() == TypeKind.INTERFACE || t.getTypeKind() == TypeKind.ENUM)
                 .sorted(Comparator.comparing(TypeDefinition::getTypeScriptName))
                 .distinct()
-                .collect(Collectors.toList());
+                .toList();
 
         final String imports = importTypes.stream()
                 .map(t -> "import {" + t.getTypeScriptName() + "} from '" + importPathResolver.apply(t) + "';")

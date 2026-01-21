@@ -65,7 +65,7 @@ public class ExtendedPropertyBuilderTest {
 
         final List<PropertyDefinition> properties = getSimpleDto.getReturnType().getProperties().stream()
                 .sorted(Comparator.comparing(PropertyDefinition::getName))
-                .collect(Collectors.toList());
+                .toList();
         
         assertEquals(2, properties.size());
 

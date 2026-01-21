@@ -33,7 +33,8 @@ import java.util.List;
  */
 public interface TypePropertyLocator {
 
-
-    List<PropertyDefinition> locateProperties(TypeElement typeElement, ProcessingContext context);
+    List<PropertyDefinition> locateProperties(TypeElement typeElement,
+                                              ProcessingContext context,
+                                              PropertyClassificationService propertyClassifiers);
 
 }

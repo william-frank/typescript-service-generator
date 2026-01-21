@@ -22,11 +22,11 @@
 
 package org.omega.typescript.processor;
 
+import com.sun.source.util.TreePath;
+import com.sun.source.util.Trees;
 import lombok.Getter;
 import org.omega.typescript.processor.services.ProcessingContext;
 import org.omega.typescript.processor.utils.StringUtils;
-import org.omega.typescript.processor.utils.TreePath;
-import org.omega.typescript.processor.utils.Trees;
 import org.omega.typescript.processor.utils.TypeUtils;
 
 import javax.lang.model.element.TypeElement;
@@ -232,9 +232,9 @@ public class GenConfig {
 
     public void tryLoadConfig(final TypeElement type) {
         try {
-            final Trees trees = Trees.fromEnv(context.getProcessingEnv());
+            final Trees trees = Trees.instance(context.getProcessingEnv());
             final TreePath path = trees.getPath(type);
-            final JavaFileObject sourceFile = path.getSourceFile();
+            final JavaFileObject sourceFile = path.getCompilationUnit().getSourceFile();
             final URI uri = sourceFile.toUri();
             final String scheme = uri.getScheme();
 

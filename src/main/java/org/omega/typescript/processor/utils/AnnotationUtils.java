@@ -31,7 +31,6 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -51,11 +50,15 @@ public final class AnnotationUtils {
     private AnnotationUtils() {
     }
 
-    public static Optional<ResolvedAnnotationValues> resolveAnnotation(final Class<?> clazz, final AnnotatedConstruct element, final ProcessingContext context) {
+    public static Optional<ResolvedAnnotationValues> resolveAnnotation(final Class<?> clazz,
+                                                                       final AnnotatedConstruct element,
+                                                                       final ProcessingContext context) {
         return resolveAnnotation(clazz.getName(), element, context);
     }
 
-    public static Optional<ResolvedAnnotationValues> resolveAnnotation(final String expectedClassName, final AnnotatedConstruct element, final ProcessingContext context) {
+    public static Optional<ResolvedAnnotationValues> resolveAnnotation(final String expectedClassName,
+                                                                       final AnnotatedConstruct element,
+                                                                       final ProcessingContext context) {
         final List<? extends AnnotationMirror> annotationMirrors = getAllAnnotations(element);
         if (annotationMirrors.isEmpty()) {
             return Optional.empty();
@@ -69,7 +72,7 @@ public final class AnnotationUtils {
 
         for (final AnnotationMirror annotation : annotationMirrors) {
             final Map<? extends ExecutableElement, ? extends AnnotationValue> values = annotation.getElementValues();
-                    //context.getProcessingEnv().getElementUtils().getElementValuesWithDefaults(annotation); //This doesn't play nice with aliasing...
+            //context.getProcessingEnv().getElementUtils().getElementValuesWithDefaults(annotation); //This doesn't play nice with aliasing...
 
             if (result.isTargetClass(annotation)) {
                 found = true;
@@ -84,8 +87,12 @@ public final class AnnotationUtils {
         return !found ? Optional.empty() : Optional.of(result);
     }
 
-    private static void setPropertyAndAliases(final ProcessingContext context, final ResolvedAnnotationValues result,
-              final ExecutableElement valueElement, final AnnotationValue value, final AnnotationMirror aliasForMirror, final TypeElement targetAnnotationType) {
+    private static void setPropertyAndAliases(final ProcessingContext context,
+                                              final ResolvedAnnotationValues result,
+                                              final ExecutableElement valueElement,
+                                              final AnnotationValue value,
+                                              final AnnotationMirror aliasForMirror,
+                                              final TypeElement targetAnnotationType) {
         final String propertyName = getAliasedPropName(context, valueElement, aliasForMirror);
 
         final boolean newValue = result.getValueMap()
@@ -99,7 +106,7 @@ public final class AnnotationUtils {
         final ExecutableElement targetProperyElement = targetAnnotationType.getEnclosedElements().stream()
                 .filter(e -> propertyName.equals(e.getSimpleName().toString()))
                 .filter(e -> e instanceof ExecutableElement)
-                .map(e -> (ExecutableElement)e)
+                .map(e -> (ExecutableElement) e)
                 .findFirst().orElse(null);
 
         if (targetProperyElement == null) {
@@ -132,7 +139,7 @@ public final class AnnotationUtils {
 
     private static boolean processAliasedProperty(ProcessingContext context, ResolvedAnnotationValues result,
                                                   ExecutableElement valueElement, AnnotationValue value, AnnotationMirror aliasForMirror,
-                                                  final boolean localToClass, final  TypeElement targetAnnotationMirror) {
+                                                  final boolean localToClass, final TypeElement targetAnnotationMirror) {
         final String targetClass = getAliasAnnotationClassName(aliasForMirror, context);
 
         if ((result.isTargetClass(targetClass)) | (((!StringUtils.hasText(targetClass)) && (localToClass)))) {
@@ -157,7 +164,7 @@ public final class AnnotationUtils {
         } else if (StringUtils.hasText(valueAttribute)) {
             return valueAttribute;
         }
-        
+
         return getAnnotationPropertyName(valueElement);
     }
 
@@ -170,10 +177,10 @@ public final class AnnotationUtils {
         return getValue(aliasForMirror, "annotation", context)
                 .map(av -> readClassAnnotationValue(av, context))
                 .filter(t -> t instanceof DeclaredType)
-                .map(t -> (DeclaredType)t)
+                .map(t -> (DeclaredType) t)
                 .map(DeclaredType::asElement)
                 .filter(e -> e instanceof TypeElement)
-                .map(te -> ((TypeElement)te).getQualifiedName().toString())
+                .map(te -> ((TypeElement) te).getQualifiedName().toString())
                 .orElse("");
     }
 
@@ -193,7 +200,7 @@ public final class AnnotationUtils {
         final Element element = annotationType.asElement();
         if (element.getKind() == ElementKind.ANNOTATION_TYPE) {
             return ((QualifiedNameable) element).getQualifiedName().toString();
-        } else if  (element.getKind() == ElementKind.CLASS) {
+        } else if (element.getKind() == ElementKind.CLASS) {
             //User annotation without a loaded definition
             return null;
         } else {
@@ -204,17 +211,17 @@ public final class AnnotationUtils {
     public static Optional<AnnotationValue> getValue(final AnnotationMirror am, final String property, final ProcessingContext context) {
         final Map<? extends ExecutableElement, ? extends AnnotationValue> values = am.getElementValues();
         return values.entrySet().stream()
-                .filter(e ->  (property.contentEquals(e.getKey().getSimpleName().toString())))
-                .map(e -> (AnnotationValue)e.getValue())
-            .findFirst()
-        ;
+                .filter(e -> (property.contentEquals(e.getKey().getSimpleName().toString())))
+                .map(e -> (AnnotationValue) e.getValue())
+                .findFirst()
+                ;
     }
 
     public static List<? extends AnnotationMirror> getAllAnnotations(final AnnotatedConstruct annotatedConstruct) {
         final List<? extends AnnotationMirror> directAnnotations;
         if (annotatedConstruct instanceof DeclaredType) {
             final DeclaredType declaredType = (DeclaredType) annotatedConstruct;
-            final QualifiedNameable element = (QualifiedNameable)declaredType.asElement();
+            final QualifiedNameable element = (QualifiedNameable) declaredType.asElement();
             if (element.getQualifiedName().toString().startsWith("java.lang.annotation.")) {
                 return Collections.emptyList();
             }
@@ -224,9 +231,9 @@ public final class AnnotationUtils {
         }
         final List<? extends AnnotationMirror> derevedAnnotations = directAnnotations.stream()
                 .flatMap(am -> getAllAnnotations(am.getAnnotationType()).stream())
-                .collect(Collectors.toList());
+                .toList();
         return Stream.concat(directAnnotations.stream(), derevedAnnotations.stream())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @SuppressWarnings("unchecked")
@@ -235,10 +242,10 @@ public final class AnnotationUtils {
             final String msg = "Unable to read " + av + " as annotation value list";
             return error(context, msg);
         }
-        final Collection<AnnotationValue> values = (List<AnnotationValue>)av.getValue();
+        final Collection<AnnotationValue> values = (List<AnnotationValue>) av.getValue();
         return values.stream()
                 .map(v -> readSimpleAnnotationValue(v, context))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public static String readSimpleAnnotationValue(final AnnotationValue av, final ProcessingContext context) {
@@ -247,7 +254,7 @@ public final class AnnotationUtils {
             error(context, "Unable to read " + av + " as simple value");
         }
         if (value instanceof VariableElement) {
-            final Element enumValue = (VariableElement)value;
+            final Element enumValue = (VariableElement) value;
             return "" + enumValue.getSimpleName();
         }
         return "" + value;

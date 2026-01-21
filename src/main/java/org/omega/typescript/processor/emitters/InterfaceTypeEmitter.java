@@ -90,7 +90,7 @@ public class InterfaceTypeEmitter extends BaseTypeEmitter {
         final TypeDefinition anyTypeDef = context.getProcessingContext().getTypeOracle().getAny();
         final List<TypeInstanceDefinition> superTypes = superTypes_.stream()
                 .filter(t -> t.getTypeDefinition() != anyTypeDef)
-                .collect(Collectors.toList());
+                .toList();
         if (superTypes.isEmpty()) {
             return "";
         }

@@ -27,11 +27,8 @@ import org.omega.typescript.api.TypeScriptIgnore;
 import org.omega.typescript.processor.model.PropertyDefinition;
 import org.omega.typescript.processor.services.ProcessingContext;
 import org.omega.typescript.processor.utils.AnnotationUtils;
-import org.omega.typescript.processor.utils.TypeUtils;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Created by kibork on 1/16/2026.
@@ -45,7 +42,9 @@ public class JavaRecordPropertyLocator implements TypePropertyLocator {
     // ------------------ Logic      --------------------
     
     @Override
-    public List<PropertyDefinition> locateProperties(final TypeElement typeElement, final ProcessingContext context) {
+    public List<PropertyDefinition> locateProperties(final TypeElement typeElement,
+                                                     final ProcessingContext context,
+                                                     final PropertyClassificationService propertyClassificationService) {
         final List<? extends RecordComponentElement> recordComponents = typeElement.getRecordComponents();
         
         return recordComponents.stream()
@@ -56,14 +55,16 @@ public class JavaRecordPropertyLocator implements TypePropertyLocator {
                     recordComponent.getAccessor(),
                     buildPropertyName(recordComponent, context),
                     recordComponent.asType(),
-                    context
+                    context,
+                    propertyClassificationService
                 )
             )
             .toList();
         
     }
     
-    private String buildPropertyName(final RecordComponentElement recordComponent, ProcessingContext context) {
+    private String buildPropertyName(final RecordComponentElement recordComponent,
+                                     final ProcessingContext context) {
         return recordComponent.getSimpleName().toString();
     }
     

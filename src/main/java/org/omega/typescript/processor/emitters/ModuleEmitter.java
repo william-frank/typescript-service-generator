@@ -70,7 +70,7 @@ public class ModuleEmitter {
 
             final List<Endpoint> endpointList = endpoints.stream()
                     .sorted(Comparator.comparing(Endpoint::getControllerName))
-                    .collect(Collectors.toList());
+                    .toList();
 
             if (!endpointList.isEmpty()) {
                 endpointList.forEach(endpoint ->

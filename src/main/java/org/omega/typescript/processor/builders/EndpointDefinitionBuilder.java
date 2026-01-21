@@ -85,7 +85,7 @@ public class EndpointDefinitionBuilder {
                 .map(m -> methodDefinitionBuilder.build(endpoint, m))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toList())
+                .toList()
         );
     }
 

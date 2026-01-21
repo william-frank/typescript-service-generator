@@ -23,8 +23,8 @@
 package org.omega.typescript.processor.builders.properties;
 
 import org.omega.typescript.api.TypeScriptIgnore;
-import org.omega.typescript.processor.services.ProcessingContext;
 import org.omega.typescript.processor.model.PropertyDefinition;
+import org.omega.typescript.processor.services.ProcessingContext;
 import org.omega.typescript.processor.utils.AnnotationUtils;
 import org.omega.typescript.processor.utils.TypeUtils;
 
@@ -48,7 +48,9 @@ public class JavaBeanPropertyLocator implements TypePropertyLocator {
     // ------------------ Logic      --------------------
 
     @Override
-    public List<PropertyDefinition> locateProperties(final TypeElement typeElement, final ProcessingContext context) {
+    public List<PropertyDefinition> locateProperties(final TypeElement typeElement,
+                                                     final ProcessingContext context,
+                                                     final PropertyClassificationService propertyClassificationService) {
         final List<ExecutableElement> methods = TypeUtils.getMethods(typeElement, context);
 
         final Set<String> ignoredFields = getIgnoredFields(typeElement, context);
@@ -61,25 +63,29 @@ public class JavaBeanPropertyLocator implements TypePropertyLocator {
                 .filter(e -> !AnnotationUtils.getAnnotation(e, TypeScriptIgnore.class).isPresent())
                 .filter(this::isGetter)
                 .filter(e -> !ignoredFields.contains(buildPropertyName(e, context)))
-                .collect(Collectors.toList());
+                .toList();
 
         return getters.stream()
-                .map(getter -> PropertyHelpers.buildProperty(
-                            getter, buildPropertyName(getter, context), getter.getReturnType(), context
+                .map(getter -> PropertyHelpers
+                        .buildProperty(
+                                getter,
+                                buildPropertyName(getter, context),
+                                getter.getReturnType(), context,
+                                propertyClassificationService
                         )
                 )
-                .collect(Collectors.toList());
+                .toList();
 
     }
 
-    private Set<String> getIgnoredFields(TypeElement typeElement, ProcessingContext context) {
+    private Set<String> getIgnoredFields(final TypeElement typeElement, final ProcessingContext context) {
         return TypeUtils.getMembers(typeElement, ElementKind.FIELD, context).stream()
-                    .filter(e -> e.getEnclosingElement() == typeElement)
-                    .filter(e -> !e.getModifiers().contains(Modifier.TRANSIENT))
-                    .filter(e -> AnnotationUtils.getAnnotation(e, TypeScriptIgnore.class).isPresent())
-                    .filter(e -> !e.getModifiers().contains(Modifier.STATIC))
-                    .map(e -> e.getSimpleName().toString())
-                    .collect(Collectors.toSet());
+                .filter(e -> e.getEnclosingElement() == typeElement)
+                .filter(e -> !e.getModifiers().contains(Modifier.TRANSIENT))
+                .filter(e -> AnnotationUtils.getAnnotation(e, TypeScriptIgnore.class).isPresent())
+                .filter(e -> !e.getModifiers().contains(Modifier.STATIC))
+                .map(e -> e.getSimpleName().toString())
+                .collect(Collectors.toSet());
     }
 
     private boolean isGetter(final ExecutableElement e) {
@@ -99,7 +105,7 @@ public class JavaBeanPropertyLocator implements TypePropertyLocator {
                 });
     }
 
-    private String buildPropertyName(final Element getter, ProcessingContext context) {
+    private String buildPropertyName(final Element getter, final ProcessingContext context) {
         final String methodName = getter.getSimpleName().toString();
         for (final String prefix : PROPERTY_PREFIXES) {
             if (methodName.startsWith(prefix)) {
@@ -113,7 +119,10 @@ public class JavaBeanPropertyLocator implements TypePropertyLocator {
             }
         }
         //May be appropriate to throw an iae?
-        context.warning("Suspicious property name without property prefix " + methodName + " in class " + getter.getEnclosingElement().getSimpleName());
+        context.warning(
+                "Suspicious property name without property prefix " + methodName +
+                        " in class " + getter.getEnclosingElement().getSimpleName()
+        );
         return methodName;
     }
 

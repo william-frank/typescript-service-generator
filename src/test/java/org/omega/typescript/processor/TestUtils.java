@@ -71,4 +71,10 @@ public class TestUtils {
         assertEquals(typeName, propertyDefinition.getType().getShortName());
     }
 
+    static void checkProperty(PropertyDefinition propertyDefinition, String tsName, String typeName, boolean nullable) {
+        assertEquals(tsName, propertyDefinition.getName());
+        assertEquals(typeName, propertyDefinition.getType().getShortName());
+        assertEquals(nullable, !propertyDefinition.isNotNullable());
+    }
+
 }

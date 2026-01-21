@@ -48,6 +48,7 @@ ext.versions = [
         junit         : '5.6.2',
         lombok        : '1.18.42',
         compileTesting: '0.23.0',
+        validationApi : '3.1.1',
 ]
 
 idea {
@@ -77,8 +78,9 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${versions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:${versions.junit}")
-
     testImplementation("org.springframework:spring-webmvc:${versions.spring}")
+
+    testImplementation "jakarta.validation:jakarta.validation-api:${versions.validationApi}"
 
     testImplementation "org.projectlombok:lombok:${versions.lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
