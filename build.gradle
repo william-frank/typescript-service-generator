@@ -50,6 +50,7 @@ ext.versions = [
         compileTesting    : '0.23.0',
         validationApi     : '3.1.1',
         jacksonAnnotations: '2.20',
+        swaggerAnnocations: '2.2.41',
 ]
 
 idea {
@@ -83,6 +84,8 @@ dependencies {
 
     testImplementation "jakarta.validation:jakarta.validation-api:${versions.validationApi}"
     testImplementation "com.fasterxml.jackson.core:jackson-annotations:${versions.jacksonAnnotations}"
+    testImplementation "io.swagger.core.v3:swagger-annotations:${versions.swaggerAnnocations}"
+
 
     testImplementation "org.projectlombok:lombok:${versions.lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
