@@ -2,6 +2,7 @@ package org.omega.typescript.processor.test.dto;
 
 import org.omega.typescript.api.TypeScriptIgnore;
 import org.omega.typescript.api.TypeScriptName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Created by kibork on 4/3/2018.
@@ -23,6 +24,8 @@ public class SimpleDto {
     private int field5;
 
     private int field6;
+
+    private int field7;
 
     // ------------------ Properties --------------------
 
@@ -71,6 +74,15 @@ public class SimpleDto {
     public SimpleDto setField5(int field5) {
         this.field5 = field5;
         return this;
+    }
+
+    @JsonIgnore
+    public int getField7() {
+        return field7;
+    }
+
+    public void setField7(int field7) {
+        this.field7 = field7;
     }
 
     // ------------------ Logic      --------------------

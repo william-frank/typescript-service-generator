@@ -9,32 +9,30 @@ import javax.lang.model.element.AnnotationMirror;
 import java.util.List;
 import java.util.Set;
 
-public class JakartaPropertyClassifier implements PropertyClassifier {
+public class JacksonPropertyClassifier implements PropertyClassifier {
 
     // --------------------- Constants & Fields -------------------
 
-    private static final Set<String> nonNullAnnotations = Set.of(
-            "jakarta.validation.constraints.NotNull",
-            "jakarta.validation.constraints.NotEmpty",
-            "jakarta.annotation.Nonnull"
+    private static final Set<String> ignoreAnnotations = Set.of(
+            "com.fasterxml.jackson.annotation.JsonIgnore"
     );
 
     // --------------------------- Methods ------------------------
 
     public boolean isNotNull(final AnnotatedConstruct annotatedConstruct, final ProcessingContext context) {
-        final List<? extends AnnotationMirror> allAnnotations = AnnotationUtils.getAllAnnotations(annotatedConstruct);
-        return allAnnotations.stream()
-                .anyMatch(annotationMirror ->
-                        nonNullAnnotations
-                                .contains(
-                                        TypeUtils.getClassName(annotationMirror.getAnnotationType(), context)
-                                )
-                );
+        return false;
     }
 
     @Override
     public boolean shouldIgnoreProperty(final AnnotatedConstruct annotatedConstruct, final ProcessingContext context) {
-        return false;
+        final List<? extends AnnotationMirror> allAnnotations = AnnotationUtils.getAllAnnotations(annotatedConstruct);
+        return allAnnotations.stream()
+                .anyMatch(annotationMirror ->
+                        ignoreAnnotations
+                                .contains(
+                                        TypeUtils.getClassName(annotationMirror.getAnnotationType(), context)
+                                )
+                );
     }
 
     // ---------------------- Inner Definitions -------------------

@@ -8,4 +8,6 @@ public interface PropertyClassifier {
 
     boolean isNotNull(AnnotatedConstruct annotatedConstruct, ProcessingContext context);
 
+    boolean shouldIgnoreProperty(AnnotatedConstruct annotatedConstruct, ProcessingContext context);
+
 }

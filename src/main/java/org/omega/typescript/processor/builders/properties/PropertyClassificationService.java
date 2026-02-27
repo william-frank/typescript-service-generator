@@ -1,6 +1,8 @@
 package org.omega.typescript.processor.builders.properties;
 
+import org.omega.typescript.api.TypeScriptIgnore;
 import org.omega.typescript.processor.services.ProcessingContext;
+import org.omega.typescript.processor.utils.AnnotationUtils;
 import org.omega.typescript.processor.utils.ServiceUtils;
 
 import javax.lang.model.AnnotatedConstruct;
@@ -28,6 +30,12 @@ public class PropertyClassificationService {
         }
         return propertyClassifiers.stream()
                 .anyMatch(propertyClassifier -> propertyClassifier.isNotNull(annotatedConstruct, context));
+    }
+
+    public boolean shouldIgnoreProperty(final AnnotatedConstruct annotatedConstruct) {
+        return AnnotationUtils.getAnnotation(annotatedConstruct, TypeScriptIgnore.class).isPresent() ||
+                propertyClassifiers.stream()
+                        .anyMatch(propertyClassifier -> propertyClassifier.shouldIgnoreProperty(annotatedConstruct, context));
     }
 
     // ---------------------- Inner Definitions -------------------

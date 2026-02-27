@@ -56,7 +56,7 @@ public class LombokPropertyLocator implements TypePropertyLocator {
         final List<Element> fields = TypeUtils.getMembers(typeElement, ElementKind.FIELD, context).stream()
                 .filter(e -> e.getEnclosingElement() == typeElement)
                 .filter(e -> !e.getModifiers().contains(Modifier.TRANSIENT))
-                .filter(e -> !AnnotationUtils.getAnnotation(e, TypeScriptIgnore.class).isPresent())
+                .filter(e -> !propertyClassificationService.shouldIgnoreProperty(e))
                 .filter(e -> !e.getModifiers().contains(Modifier.STATIC))
                 .toList();
 

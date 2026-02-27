@@ -1,1 +1,2 @@
 org.omega.typescript.processor.builders.properties.JakartaPropertyClassifier
+org.omega.typescript.processor.builders.properties.JacksonPropertyClassifier

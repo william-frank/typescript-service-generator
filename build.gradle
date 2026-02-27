@@ -33,7 +33,7 @@ java {
     }
 }
 
-version = '0.3.1-SNAPSHOT'
+version = '0.3.3-SNAPSHOT'
 group = 'io.github.tri-omega'
 archivesBaseName = 'typescript-service-generator'
 
@@ -43,12 +43,13 @@ repositories {
 }
 
 ext.versions = [
-        spring        : '7.0.2',
-        guava         : '33.5.0-jre',
-        junit         : '5.6.2',
-        lombok        : '1.18.42',
-        compileTesting: '0.23.0',
-        validationApi : '3.1.1',
+        spring            : '7.0.2',
+        guava             : '33.5.0-jre',
+        junit             : '5.6.2',
+        lombok            : '1.18.42',
+        compileTesting    : '0.23.0',
+        validationApi     : '3.1.1',
+        jacksonAnnotations: '2.20',
 ]
 
 idea {
@@ -70,7 +71,7 @@ sourceSets {
 dependencies {
     annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 
-    compileOnly("org.springframework:spring-webmvc:${versions.spring}")
+    compileOnly "org.springframework:spring-webmvc:${versions.spring}"
     compileOnly "org.projectlombok:lombok:${versions.lombok}"
 
     testImplementation "com.google.guava:guava:${versions.guava}"
@@ -81,6 +82,7 @@ dependencies {
     testImplementation("org.springframework:spring-webmvc:${versions.spring}")
 
     testImplementation "jakarta.validation:jakarta.validation-api:${versions.validationApi}"
+    testImplementation "com.fasterxml.jackson.core:jackson-annotations:${versions.jacksonAnnotations}"
 
     testImplementation "org.projectlombok:lombok:${versions.lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"

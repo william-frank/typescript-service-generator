@@ -22,51 +22,50 @@
 
 package org.omega.typescript.processor.builders.properties;
 
-import javax.lang.model.element.*;
-import org.omega.typescript.api.TypeScriptIgnore;
 import org.omega.typescript.processor.model.PropertyDefinition;
 import org.omega.typescript.processor.services.ProcessingContext;
-import org.omega.typescript.processor.utils.AnnotationUtils;
 
+import javax.lang.model.element.RecordComponentElement;
+import javax.lang.model.element.TypeElement;
 import java.util.List;
 
 /**
  * Created by kibork on 1/16/2026.
  */
 public class JavaRecordPropertyLocator implements TypePropertyLocator {
-    
+
     // ---------------- Fields & Constants --------------
-    
+
     // ------------------ Properties --------------------
-    
+
     // ------------------ Logic      --------------------
-    
+
     @Override
     public List<PropertyDefinition> locateProperties(final TypeElement typeElement,
                                                      final ProcessingContext context,
                                                      final PropertyClassificationService propertyClassificationService) {
         final List<? extends RecordComponentElement> recordComponents = typeElement.getRecordComponents();
-        
+
         return recordComponents.stream()
-            .filter(e -> AnnotationUtils.getAnnotation(e, TypeScriptIgnore.class).isEmpty())
-            .map(recordComponent ->
-                PropertyHelpers
-                .buildProperty(
-                    recordComponent.getAccessor(),
-                    buildPropertyName(recordComponent, context),
-                    recordComponent.asType(),
-                    context,
-                    propertyClassificationService
+                .filter(e -> !propertyClassificationService.shouldIgnoreProperty(e))
+                .map(recordComponent ->
+                        PropertyHelpers
+                                .buildProperty(
+                                        recordComponent.getAccessor(),
+                                        buildPropertyName(recordComponent, context),
+                                        recordComponent.asType(),
+                                        context,
+                                        propertyClassificationService
+                                )
                 )
-            )
-            .toList();
-        
+                .toList();
+
     }
-    
+
     private String buildPropertyName(final RecordComponentElement recordComponent,
                                      final ProcessingContext context) {
         return recordComponent.getSimpleName().toString();
     }
-    
-    
+
+
 }

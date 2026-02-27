@@ -101,9 +101,9 @@ public class MethodEmitter {
 
     private String getParamDeclaration(EndpointMethod method) {
         return method.getParams().stream()
-                    .map(param ->
-                            String.format("%s: %s", param.getName(), context.getInstanceRenderer().renderTypeInstance(param.getType()))
-                    ).collect(Collectors.joining(", "));
+                .map(param ->
+                        String.format("%s: %s", param.getName(), context.getInstanceRenderer().renderTypeInstance(param.getType()))
+                ).collect(Collectors.joining(", "));
     }
 
     public PrintWriter renderMapping(final PrintWriter writer, final MappingDefinition mapping) {
@@ -111,8 +111,9 @@ public class MethodEmitter {
         writer.printf("{urlTemplate: '%s', method: %s}",
                 StringUtils.escapeString(
                         mappingDefinitionOptional.map(MappingDefinition::getUrlTemplate).orElse(""), "'"),
-                        mappingDefinitionOptional.map(MappingDefinition::getRequestMethod)
-                            .map(v -> "RequestMethod." + v.name()).orElse("null")
+                mappingDefinitionOptional.map(MappingDefinition::getRequestMethod)
+                        .map(v -> "RequestMethod." + v.name())
+                        .orElse("RequestMethod.GET")
         );
         return writer;
     }
