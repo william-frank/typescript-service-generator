@@ -29,13 +29,12 @@ plugins {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
 version = '0.3.5-SNAPSHOT'
 group = 'io.github.tri-omega'
-archivesBaseName = 'typescript-service-generator'
 
 repositories {
     mavenLocal()
@@ -45,7 +44,7 @@ repositories {
 ext.versions = [
         spring            : '7.0.2',
         guava             : '33.5.0-jre',
-        junit             : '5.6.2',
+        junit             : '6.0.3',
         lombok            : '1.18.42',
         compileTesting    : '0.23.0',
         validationApi     : '3.1.1',
@@ -89,6 +88,7 @@ dependencies {
 
     testImplementation "org.projectlombok:lombok:${versions.lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 
 test {
