@@ -70,6 +70,10 @@ public class TypeInstanceBuilder {
             if ((typeInstance.getTypeKind().hasTypeParams())) {
                 checkTypeParameters(typeInstance, typeMirror);
             }
+            if (TypeUtils.isJavaOptionalType(typeInstance)) {
+                //Optional fields are emitted as direct types
+                return typeInstance.getGenericTypeArguments().getFirst();
+            }
             return typeInstance;
         }
     }

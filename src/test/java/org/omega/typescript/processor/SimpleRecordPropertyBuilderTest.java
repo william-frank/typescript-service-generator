@@ -63,12 +63,13 @@ public class SimpleRecordPropertyBuilderTest {
 
         final List<PropertyDefinition> properties = getSimpleRecord.getReturnType().getProperties();
         
-        assertEquals(4, properties.size());
+        assertEquals(5, properties.size());
 
         TestUtils.checkProperty(properties.get(0), "field1", "String");
         TestUtils.checkProperty(properties.get(1), "field2", "long", false);
         TestUtils.checkProperty(properties.get(2), "customName", "Integer");
         TestUtils.checkProperty(properties.get(3), "field4", "Long", false);
+        TestUtils.checkProperty(properties.get(4), "field5", "String", true);
     }
 
 }

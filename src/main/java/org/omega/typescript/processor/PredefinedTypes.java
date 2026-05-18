@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by kibork on 3/12/2018.
@@ -84,6 +85,13 @@ public class PredefinedTypes {
                         .setTypeKind(TypeKind.COLLECTION)
                         .setPredefined(true)
                         .setTypeScriptName(TypeUtils.ARRAY_TYPE_NAME)
+        );
+
+        typeOracle.addType(
+                new TypeDefinition(Optional.class.getName(), Optional.class.getSimpleName())
+                        .setTypeKind(TypeKind.INTERFACE)
+                        .setPredefined(true)
+                        .setTypeScriptName("?")
         );
 
         final GenConfig config = typeOracle.getContext().getGenConfig();

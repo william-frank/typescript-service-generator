@@ -72,12 +72,14 @@ public class TypeInstanceEmitter {
     private String getMapInstance(final TypeInstanceDefinition instanceDefinition) {
         if (!instanceDefinition.getGenericTypeArguments().isEmpty()) {
             final String collectionIndexType = getMapKeyType(instanceDefinition);
-            if ((!"number".equals(collectionIndexType)) && (!"string".equals(collectionIndexType))) {
-                context.warning("Unable to use " + collectionIndexType + "as map index: TypeScript at this point prohibits maps of non indexable types");
+            if (context.getGenConfig().getAllowedMapKeyTypes().contains(collectionIndexType)) {
+                return "{ //@ts-ignore Allowed Map Key Type \n [" + getMapKeyName(instanceDefinition) + ": " + collectionIndexType + "]: " + getCollectionBaseType(instanceDefinition, 1) + " \n }";
+            } else if ((!"number".equals(collectionIndexType)) && (!"string".equals(collectionIndexType))) {
+                context.warning("Unable to use " + collectionIndexType + " as map index: TypeScript at this point prohibits maps of non indexable types");
                 return "{}";
+            } else {
+                return "{ [" + getMapKeyName(instanceDefinition) + ": " + collectionIndexType + "]: " + getCollectionBaseType(instanceDefinition, 1) + " }";
             }
-
-            return "{ [" + getMapKeyName(instanceDefinition) + ": " + collectionIndexType + "]: " + getCollectionBaseType(instanceDefinition, 1) + " }";
         } else {
             return "{ }";
         }

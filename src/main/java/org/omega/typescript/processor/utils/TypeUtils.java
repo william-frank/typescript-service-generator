@@ -23,6 +23,7 @@
 package org.omega.typescript.processor.utils;
 
 import org.omega.typescript.processor.model.TypeDefinition;
+import org.omega.typescript.processor.model.TypeInstanceDefinition;
 import org.omega.typescript.processor.services.ProcessingContext;
 
 import javax.lang.model.element.*;
@@ -30,6 +31,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by kibork on 2/2/2018.
@@ -50,7 +52,9 @@ public final class TypeUtils {
     private TypeUtils() {
     }
 
-    public static List<Element> getMembers(final TypeElement typeElement, final ElementKind kind, final ProcessingContext context) {
+    public static List<Element> getMembers(final TypeElement typeElement,
+                                           final ElementKind kind,
+                                           final ProcessingContext context) {
         return context
                 .getProcessingEnv().getElementUtils()
                 .getAllMembers(typeElement).stream()
@@ -88,5 +92,12 @@ public final class TypeUtils {
         return containerType.getFullName() + "#" + genericName;
     }
 
+    public static boolean isJavaOptionalType(final TypeInstanceDefinition typeInstance) {
+        return isJavaOptionalType(typeInstance.getFullName());
+    }
+
+    public static boolean isJavaOptionalType(final String fullClassName) {
+        return Optional.class.getName().equals(fullClassName);
+    }
 }
 

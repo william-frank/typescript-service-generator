@@ -37,10 +37,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -92,6 +89,8 @@ public class GenConfig {
     private Map<String, Pattern> excludedClasses = new HashMap<>();
 
     private Map<String, String> typeOverrides = new HashMap<>();
+
+    private Set<String> allowedMapKeyTypes = new HashSet<>();
 
     private long indentWidth = 2;
 
@@ -180,6 +179,8 @@ public class GenConfig {
             timeType = value;
         } else if ("java-time.date-type".equals(propertyName)) {
             dateType = value;
+        } else if ("allowed-map-key-types".equals(propertyName)) {
+            this.allowedMapKeyTypes.addAll(Arrays.asList(value.split(",")));
         } else if ("storage-strategy".equals(propertyName)) {
             storageStrategy = value;
         } else if (propertyName.startsWith("exclude-classes-regex")) {

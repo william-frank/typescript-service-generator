@@ -33,7 +33,7 @@ java {
     }
 }
 
-version = '0.3.3-SNAPSHOT'
+version = '0.3.5-SNAPSHOT'
 group = 'io.github.tri-omega'
 archivesBaseName = 'typescript-service-generator'
 
