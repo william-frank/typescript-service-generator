@@ -63,26 +63,27 @@ public final class TypeUtils {
                 .toList();
     }
 
-    public static List<ExecutableElement> getMethods(TypeElement typeElement, ProcessingContext context) {
+    public static List<ExecutableElement> getMethods(final TypeElement typeElement, final ProcessingContext context) {
         return TypeUtils.getMembers(typeElement, ElementKind.METHOD, context).stream()
                 .map(m -> (ExecutableElement) m)
                 .toList();
     }
 
-    public static String getClassName(TypeElement typeElement) {
+    public static String getClassName(final TypeElement typeElement) {
         return typeElement.getQualifiedName().toString();
     }
 
     public static String getClassName(final TypeMirror typeMirror, final ProcessingContext context) {
-        if (typeMirror.getKind().isPrimitive()) {
-            return typeMirror.toString();
-        } else if (typeMirror.getKind() == TypeKind.ARRAY) {
+        final Types typeUtils = context.getProcessingEnv().getTypeUtils();
+        final TypeMirror cleanTypeMirror = typeUtils.stripAnnotations(typeMirror);
+
+        if (cleanTypeMirror.getKind().isPrimitive()) {
+            return cleanTypeMirror.toString();
+        } else if (cleanTypeMirror.getKind() == TypeKind.ARRAY) {
             return ARRAY_TYPE_NAME;
         }
-        final Types typeUtils = context.getProcessingEnv().getTypeUtils();
-        final Element element = typeUtils.asElement(typeMirror);
-        if (element instanceof QualifiedNameable) {
-            final QualifiedNameable nameable = (QualifiedNameable) element;
+        final Element element = typeUtils.asElement(cleanTypeMirror);
+        if (element instanceof QualifiedNameable nameable) {
             return nameable.getQualifiedName().toString();
         }
         return element.getSimpleName().toString();
